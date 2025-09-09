@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>مساعد يومي باللهجة المصرية</title>
+  <style>
+    body{font-family:Arial, sans-serif;background:#f7f9fc;margin:0;padding:20px;color:#222}
+    .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+    h2{margin-top:0}
+    button{padding:8px 12px;border:none;border-radius:8px;background:#ff6b6b;color:#fff;cursor:pointer}
+    .list{margin:8px 0;padding:8px;background:#f9fbff;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🕌 مواقيت الصلاة (تلقائي)</h2>
+    <div id="prayers">جاري تحميل المواقيت...</div>
+    <button onclick="fetchPrayers()">تحديث المواقيت</button>
+  </div>
+
+  <div class="card">
+    <h2>💡 نصيحة اليوم</h2>
+    <div id="tip">---</div>
+    <button onclick="showTip()">نصيحة جديدة</button>
+  </div>
+
+  <div class="card">
+    <h2>😂 نكتة اليوم</h2>
+    <div id="joke">---</div>
+    <button onclick="showJoke()">نكتة جديدة</button>
+  </div>
+
+<script>
+// نصائح ونكت بسيطة
+const tips=["اشرب ميه كفاية يا صحبي","خد راحة 5 دقايق","ابدأ بحاجة صغيرة النهاردة","ضحكة بتعدل مودك"];
+const jokes=["مرة واحد راح ينام بدري.. لقى الليل سبقه!","واحد بيقول لصاحبه: انا حلمت اني اكلت كباب.. صحي لقى السيخ في بقه 😂"];
+
+function showTip(){document.getElementById('tip').textContent=tips[Math.floor(Math.random()*tips.length)];}
+function showJoke(){document.getElementById('joke').textContent=jokes[Math.floor(Math.random()*jokes.length)];}
+showTip();showJoke();
+
+// جلب مواقيت الصلاة تلقائيًا من API
+async function fetchPrayers(){
+  try{
+    // مثال باستخدام API لمواقيت الصلاة (Aladhan)
+    const res = await fetch("https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5");
+    const data = await res.json();
+    const t = data.data.timings;
+    document.getElementById('prayers').innerHTML =
+      `<div class='list'>الفجر: ${t.Fajr}</div>
+       <div class='list'>الظهر: ${t.Dhuhr}</div>
+       <div class='list'>العصر: ${t.Asr}</div>
+       <div class='list'>المغرب: ${t.Maghrib}</div>
+       <div class='list'>العشاء: ${t.Isha}</div>`;
+  }catch(e){
+    document.getElementById('prayers').textContent='حصل خطأ في تحميل المواقيت';
+  }
+}
+
+// تحميل تلقائي أول مرة
+fetchPrayers();
+</script>
+</body>
+</html>
